@@ -2,36 +2,35 @@
 
 class Solution {
     public int myAtoi(String s) {
-        int res ;
+        int res=0 ;
+        final int len = s.length();
         int flag = 1;  //标记正负
-        int i = 0;
-        double d ;
-        StringBuilder sb = new StringBuilder();
-        s =s.trim();
-        char[] med=s.toCharArray();
-        for (char c:med){
-            if (c == '-' && i == 0){
-                flag = 0;
-            }else if (Character.isDigit(c)){
-                sb.append(c);
-            }else if(!(i == 0 && c == '+')){
-                break;
-            }
-            i++;
+        int index = 0;
+        char[] chars =s.toCharArray();
+        while(index < len && chars[index] == ' ' ){
+            index++;
         }
-        if(sb.length() == 0){
+        if(index == len){
             return 0;
         }
-        if(flag == 0) {
-            sb.insert(0, '-');
+        if(chars[index] == '-'){
+            flag = -flag;
+            index++;
+        }else if(chars[index] == '+'){
+            index++;
         }
-        d = Double.parseDouble(sb.toString());
-        if (d < Integer.MIN_VALUE){
-            res = Integer.MIN_VALUE;
-        } else if(d > Integer.MAX_VALUE){
-            res = Integer.MAX_VALUE;
-        }else{
-            res = Integer.parseInt(sb.toString());
+        while (index < len){
+            char currChar = chars[index];
+            if(currChar < '0' || currChar > '9'){
+                break;
+            }
+            if(res > Integer.MAX_VALUE / 10 || (res == Integer.MAX_VALUE / 10 && (currChar - '0') > Integer.MAX_VALUE % 10)){
+                return Integer.MAX_VALUE;
+            }else if(res < Integer.MIN_VALUE / 10 || (res == Integer.MIN_VALUE / 10 && (currChar - '0') > -(Integer.MIN_VALUE % 10))){
+                return Integer.MIN_VALUE;
+            }
+            res = res * 10 + flag * (currChar - '0');
+            index++;
         }
         return res;
     }
@@ -39,7 +38,7 @@ class Solution {
 
     public static void main(String[] args)  {
         Solution solution = new Solution();
-        int n = solution.myAtoi(" 999999999999999879879789789789897 ");
+        int n = solution.myAtoi("2147483648");
         System.out.println("n = " + n);
     }
 
